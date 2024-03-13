@@ -1,4 +1,4 @@
-package com.sky.exception;
+package com.sky.result.exception;
 
 /**
  * 套餐启用失败异常
