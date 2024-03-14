@@ -6,7 +6,9 @@ import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
+import com.sky.result.PageResult;
 import com.sky.result.exception.AccountLockedException;
 import com.sky.result.exception.AccountNotFoundException;
 import com.sky.result.exception.PasswordErrorException;
@@ -18,6 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -80,6 +85,55 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateUser(BaseContext.getCurrentId());
 
         employeeMapper.addEmployee(employee);
+    }
+
+    @Override
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        int page = employeePageQueryDTO.getPage();
+        int pageSize = employeePageQueryDTO.getPageSize();
+        String name = employeePageQueryDTO.getName();
+        int startPage = (page - 1) * pageSize;
+        long totalPages = employeeMapper.totalPages();
+        Employee[] employees = employeeMapper.pageQuery(name, startPage, pageSize);
+
+        List<Employee> employeeList = new ArrayList<>();
+        for(Employee e : employees){
+            employeeList.add(e);
+        }
+        PageResult pageResult = new PageResult(totalPages, employeeList);
+        return pageResult;
+    }
+
+    /**
+     * 启用或禁用员工
+     * @param status
+     * @param id
+     */
+    @Override
+    public void modifyStatus(Integer status, Long id) {
+        Employee employee = Employee.builder().status(status).id(id).build();
+        employeeMapper.update(employee);
+    }
+
+    /**
+     * 根据ID查询员工信息
+     * @param id
+     * @return
+     */
+    @Override
+    public Employee getById(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        return employee;
+    }
+
+    @Override
+    public void modifyEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employeeMapper.update(employee);
+
     }
 
 }
