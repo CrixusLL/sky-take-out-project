@@ -5,3 +5,5 @@
 *Test.java
 **/test/
 /pics
+application-dev.yml
+**/resources/application-dev.yml
