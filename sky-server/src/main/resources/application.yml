@@ -65,3 +65,8 @@ sky:
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}
+  shop:
+    address: "广州市番禺区南村镇沙市下街2号"
+
+amap:
+  key: 618f2f1af62eb8a6dd0a2a8ef11e0cd6
